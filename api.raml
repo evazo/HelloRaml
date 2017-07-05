@@ -1,0 +1,113 @@
+#%RAML 1.0
+version: 1
+baseUri: http://api.localhost.com
+mediaType:
+  - application/vnd.api+json
+protocols:
+  - http
+title: AMS HelloWorld API
+types:
+  Account:
+    displayName: Account
+    properties:
+      id: integer
+      agentNumber: string
+      displayName: string
+
+  Address:
+    displayName: Address
+    properties:
+      id: integer
+      line1:
+        type: string
+        required: true
+      line2: string
+      city: string
+      state:
+        type: string
+        minLength: 2
+      postalCode:
+        type: string
+        required: true
+        minLength: 6
+        maxLength: 12
+
+  Person:
+    properties:
+      id: integer
+      firstName:
+        type: string
+        required: true
+      middleName?: string
+      lastName:
+        type: string
+        required: true
+        example: |
+          {
+          data:[{
+          "id":1234,
+          "firstName":"Edgardo",
+          "lastName":"Vazquez"
+          }
+
+/contacts:
+  get:
+    description: Get all contacts
+    responses:
+      200:
+        body:
+          application/json:
+            type: object
+            properties:
+              data: Person[]
+
+    headers:
+      accountId:
+        type: integer
+        required: true
+
+  /{id}:
+    get:
+      responses:
+       200:
+        body:
+          application/json:
+            type: object
+            properties:
+              data: Person
+              relationships: object
+              links: object
+
+      headers:
+          accountId:
+            type: integer
+            required: true
+    put:
+      responses:
+        200:
+          body:
+            application/json:
+              type: object
+              properties:
+                data: Person
+                links: object
+/accounts:
+  /{accountId}:
+    description: Retrieve agency by accountId
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              type: object
+              properties:
+                data: Account
+
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            type: object
+            properties:
+              data: Account[]
